@@ -436,17 +436,17 @@ async def analyze_risk(data: AnalyzeRequest):
         p = data.patient
         
         prompt = (
-            f"As a clinical AI assistant, provide a comprehensive analysis for a diabetic patient with a readmission risk score of {pct}%. "
+            f"As a clinical AI assistant, analyze a diabetic patient with a hospital readmission risk score of {pct}%. "
             f"Patient Profile: Age {p.get('age', 'N/A')}, Gender {p.get('gender', 'N/A')}, Race {p.get('race', 'N/A')}. "
             f"Clinical Indicators: A1C {p.get('A1Cresult', 'N/A')}, Inpatient visits {p.get('number_inpatient', 'N/A')}, "
             f"Emergency visits {p.get('number_emergency', 'N/A')}, Medications {p.get('num_medications', 'N/A')}, "
             f"Insulin {p.get('insulin', 'N/A')}, Metformin {p.get('metformin', 'N/A')}, "
             f"Length of Stay {p.get('time_in_hospital', 'N/A')} days. "
-            f"Instructions: Generate a professional 3-4 sentence clinical summary. "
-            f"1. Identify the primary risk drivers. 2. Provide specific, actionable clinical recommendations for the attending physician. "
-            f"3. Outline a preventative post-discharge action plan. "
-            f"Maintain a formal medical tone. Use markdown bolding for key terms but keep the overall length concise."
+            f"Instructions: Generate a professional list of 4-5 concise bullet points titled 'Top Risk Signals'. "
+            f"Each bullet should identify a specific clinical driver and its implication for readmission (e.g., 'Prior inpatient visits are high, indicating repeated utilization'). "
+            f"Maintain a formal medical tone. Do not use a paragraph format."
         )
+
 
         
         summary = call_clinical_ai(prompt)
