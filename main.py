@@ -435,19 +435,21 @@ async def analyze_risk(data: AnalyzeRequest):
         pct = round(data.risk_score * 100)
         p = data.patient
         
+        med_list = ['metformin', 'repaglinide', 'nateglinide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'glyburide-metformin']
+        med_profile = ", ".join([f"{m}: {p.get(m, 'No')}" for m in med_list])
+
         prompt = (
             f"As a clinical AI assistant, analyze a diabetic patient with a hospital readmission risk score of {pct}%. "
             f"Patient Profile: Age {p.get('age', 'N/A')}, Gender {p.get('gender', 'N/A')}, Race {p.get('race', 'N/A')}. "
             f"Clinical Indicators: A1C {p.get('A1Cresult', 'N/A')}, Inpatient visits {p.get('number_inpatient', 'N/A')}, "
             f"Emergency visits {p.get('number_emergency', 'N/A')}, Medications {p.get('num_medications', 'N/A')}, "
-            f"Medication Profile: {', '.join([f'{m}: {p.get(m, \"No\")}' for m in ['metformin', 'repaglinide', 'nateglinide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'glyburide-metformin']])}. "
-
+            f"Medication Profile: {med_profile}. "
             f"Insulin {p.get('insulin', 'N/A')}, Length of Stay {p.get('time_in_hospital', 'N/A')} days. "
-
             f"Instructions: Generate a professional list of 4-5 concise bullet points titled 'Top Risk Signals'. "
             f"Each bullet should identify a specific clinical driver and its implication for readmission (e.g., 'Prior inpatient visits are high, indicating repeated utilization'). "
             f"Maintain a formal medical tone. Do not use a paragraph format."
         )
+
 
 
         
@@ -467,14 +469,15 @@ async def treatment_plan(data: AnalyzeRequest):
         pct = round(data.risk_score * 100)
         p = data.patient
         
+        med_list = ['insulin', 'metformin', 'repaglinide', 'nateglinide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'glyburide-metformin']
+        med_profile = ", ".join([f"{m}: {p.get(m, 'No')}" for m in med_list])
+
         prompt = (
             f"As a clinical AI assistant, analyze a diabetic patient with a hospital readmission risk score of {pct}%. "
             f"Patient details: Age {p.get('age', 'N/A')}, Gender {p.get('gender', 'N/A')}, A1C {p.get('A1Cresult', 'N/A')}, "
-            f"Medication Profile: {', '.join([f'{m}: {p.get(m, \"No\")}' for m in ['insulin', 'metformin', 'repaglinide', 'nateglinide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'glyburide-metformin']])}, "
-
+            f"Medication Profile: {med_profile}, "
             f"Inpatient visits {p.get('number_inpatient', 'N/A')}, Total Medications {p.get('num_medications', 'N/A')}, "
             f"Time in hospital {p.get('time_in_hospital', 'N/A')} days. "
-
             f"Provide a comprehensive, step-by-step treatment plan and preventative action plan to avoid readmission. "
             f"Structure the response into clear sections: "
             f"1) Immediate Actions, "
@@ -484,6 +487,7 @@ async def treatment_plan(data: AnalyzeRequest):
             f"5) Follow-up Schedule. "
             f"Keep it professional, clinical, and directly address the risk factors. Please format it with Markdown to be easily readable."
         )
+
 
         
         plan = call_clinical_ai(prompt)
